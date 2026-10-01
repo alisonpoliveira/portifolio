@@ -1,0 +1,167 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-sans: "Libre Franklin", sans-serif;
+  --deep: 36 29 82; /* #241D52 */
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  position: relative;
+  min-width: 320px;
+  background-color: #332b6b;
+  color: #fcfaff;
+  font-family: var(--font-sans);
+  /* "clip" corta o excesso sem criar um contêiner de rolagem, o que preserva o header sticky.
+     (overflow-x: hidden em html + body quebrava o position: sticky.) */
+  overflow-x: clip;
+}
+
+/* Fundo: textura roxa granulada + escurecimento para garantir contraste do texto
+   + dois brilhos de cor que dão ao vidro algo para "refratar". */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -2;
+  pointer-events: none;
+  background-image: url("/images/background-texture.webp");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(60vmax 60vmax at 88% 6%, rgba(255, 157, 110, 0.3), transparent 62%),
+    radial-gradient(55vmax 55vmax at 4% 78%, rgba(255, 143, 184, 0.2), transparent 62%),
+    linear-gradient(rgba(36, 29, 82, 0.42), rgba(36, 29, 82, 0.56));
+}
+
+::selection {
+  background-color: #ff9d6e;
+  color: #241d52;
+}
+
+button,
+a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+@layer components {
+  .focus-ring:focus-visible {
+    outline: 2px solid #ff9d6e;
+    outline-offset: 3px;
+  }
+
+  .container-editorial {
+    max-width: 1240px;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .container-editorial {
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
+    }
+  }
+
+  .eyebrow {
+    font-weight: 600;
+    font-size: 0.75rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #ffcba8;
+  }
+
+  .num {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ─────────────── Vidro ───────────────
+     Três níveis, do mais ao menos "pesado". Só superfícies grandes usam blur;
+     chips e tags são planos (muitos backdrop-filters pesam no celular).
+
+     .glass       → cards e painéis (tinta escura + brilho no canto superior)
+     .glass-soft  → pílula de navegação
+     .glass-bar   → header ao rolar a página
+  */
+  .glass {
+    background:
+      linear-gradient(145deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.04) 55%),
+      rgba(36, 29, 82, 0.38);
+    -webkit-backdrop-filter: blur(16px) saturate(150%);
+    backdrop-filter: blur(16px) saturate(150%);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.28),
+      0 18px 40px -22px rgba(20, 10, 50, 0.65);
+  }
+
+  .glass-soft {
+    background: rgba(36, 29, 82, 0.34);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    backdrop-filter: blur(12px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.2);
+  }
+
+  .glass-bar {
+    background: rgba(36, 29, 82, 0.66);
+    -webkit-backdrop-filter: blur(14px) saturate(140%);
+    backdrop-filter: blur(14px) saturate(140%);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  /* Navegadores sem backdrop-filter: fundo sólido em vez de um vidro "lavado". */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass,
+    .glass-soft {
+      background: rgba(48, 40, 104, 0.9);
+    }
+    .glass-bar {
+      background: rgba(36, 29, 82, 0.96);
+    }
+  }
+
+  /* Celular: blur menor (mais fluido) e menos sombra. */
+  @media (max-width: 767px) {
+    .glass {
+      -webkit-backdrop-filter: blur(10px) saturate(140%);
+      backdrop-filter: blur(10px) saturate(140%);
+      box-shadow: inset 0 1px 0 0 rgba(255, 255, 255, 0.24), 0 10px 24px -16px rgba(20, 10, 50, 0.6);
+    }
+  }
+
+  /* Menu mobile: altura da tela menos o header (dvh respeita a barra do navegador). */
+  .mobile-menu {
+    height: calc(100vh - 4rem);
+    height: calc(100dvh - 4rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
